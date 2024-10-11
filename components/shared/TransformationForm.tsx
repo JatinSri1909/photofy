@@ -19,11 +19,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { transform } from "next/dist/build/swc";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { AspectRatioKey } from "@/lib/utils";
 import { Button } from "../ui/button";
-import { config } from "process";
+import { useRouter } from "next/router";
 
 export const formSchema = z.object({
   title: z.string(),
@@ -48,6 +47,8 @@ const TransformationForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
   const [transformationConfig, setTransformationConfig] = useState(config);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const initialValues =
     data && action === "Update"
@@ -72,7 +73,20 @@ const TransformationForm = ({
   const onSelectFieldHandler = (
     value: string,
     onChangeField: (value: string) => void
-  ) => {};
+  ) => {
+    const imageSize = aspectRatioOptions[value as AspectRatioKey];
+
+    setImage((prevState: any) => ({
+      ...prevState,
+      aspectRatio: imageSize.aspectRatio,
+      width: imageSize.width,
+      height: imageSize.height,
+    }));
+
+    setNewTransformation(transformationType.config);
+
+    return onChangeField(value);
+  };
 
   const onInputChangeHandler = (
     fieldName: string,
