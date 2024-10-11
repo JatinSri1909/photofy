@@ -64,6 +64,8 @@ const TransformationForm = ({
     onChangeField: (value: string) => void
   ) => {};
 
+  const onInputChangeHandler = (fieldName: string, value: string, type: string, onChangeField: (value: string) => void) => {}
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -100,6 +102,31 @@ const TransformationForm = ({
               </Select>
             )}
           />
+        )}
+
+        {(type === "remove" || type === "recolor") && (
+          <div className="prompt-field">
+            <CustomField
+              control={form.control}
+              name="prompt"
+              formLabel={
+                type === 'remove' ? "Object to remove" : "Object to recolor"
+              }
+              className="w-full"
+              render={({ field}) => (
+                <Input 
+                  value={field.value}
+                  className="input-field" 
+                  onChange={(e) => onInputChangeHandler(
+                    'prompt',
+                    e.target.value,
+                    type,
+                    field.onChange
+                  )}
+                />
+              )}
+             />
+          </div>
         )}
       </form>
     </Form>
