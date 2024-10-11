@@ -5,7 +5,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Form } from "@/components/ui/form";
-import { aspectRatioOptions, defaultValues, transformationTypes } from "@/constants";
+import {
+  aspectRatioOptions,
+  defaultValues,
+  transformationTypes,
+} from "@/constants";
 import { CustomField } from "./CustomField";
 import { Input } from "../ui/input";
 import {
@@ -18,6 +22,8 @@ import {
 import { transform } from "next/dist/build/swc";
 import { useState } from "react";
 import { AspectRatioKey } from "@/lib/utils";
+import { Button } from "../ui/button";
+import { config } from "process";
 
 export const formSchema = z.object({
   title: z.string(),
@@ -33,11 +39,15 @@ const TransformationForm = ({
   userId,
   type,
   creditBalance,
+  config = null,
 }: TransformationFormProps) => {
   const transformationType = transformationTypes[type];
   const [image, setImage] = useState(data);
   const [newTransformation, setNewTransformation] =
     useState<Transformations | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isTransforming, setIsTransforming] = useState(false);
+  const [transformationConfig, setTransformationConfig] = useState(config);
 
   const initialValues =
     data && action === "Update"
@@ -64,7 +74,14 @@ const TransformationForm = ({
     onChangeField: (value: string) => void
   ) => {};
 
-  const onInputChangeHandler = (fieldName: string, value: string, type: string, onChangeField: (value: string) => void) => {}
+  const onInputChangeHandler = (
+    fieldName: string,
+    value: string,
+    type: string,
+    onChangeField: (value: string) => void
+  ) => {};
+
+  const onTransformationHandler = async () => {};
 
   return (
     <Form {...form}>
@@ -110,27 +127,29 @@ const TransformationForm = ({
               control={form.control}
               name="prompt"
               formLabel={
-                type === 'remove' ? "Object to remove" : "Object to recolor"
+                type === "remove" ? "Object to remove" : "Object to recolor"
               }
               className="w-full"
-              render={({ field}) => (
-                <Input 
+              render={({ field }) => (
+                <Input
                   value={field.value}
-                  className="input-field" 
-                  onChange={(e) => onInputChangeHandler(
-                    'prompt',
-                    e.target.value,
-                    type,
-                    field.onChange
-                  )}
+                  className="input-field"
+                  onChange={(e) =>
+                    onInputChangeHandler(
+                      "prompt",
+                      e.target.value,
+                      type,
+                      field.onChange
+                    )
+                  }
                 />
               )}
-             />
+            />
           </div>
         )}
 
         {type === "recolor" && (
-          <CustomField 
+          <CustomField
             control={form.control}
             name="color"
             formLabel="Replacement Color"
@@ -139,16 +158,37 @@ const TransformationForm = ({
               <Input
                 value={field.value}
                 className="input-field"
-                onChange={(e) => onInputChangeHandler(
-                  'color',
-                  e.target.value,
-                  type,
-                  field.onChange
-                )}
-               />
+                onChange={(e) =>
+                  onInputChangeHandler(
+                    "color",
+                    e.target.value,
+                    "recolor",
+                    field.onChange
+                  )
+                }
+              />
             )}
-           />
+          />
         )}
+
+        <div className="flex flex-col gap-4">
+          <Button
+            type="button"
+            className="submit-button capitalize"
+            disabled={isTransforming || newTransformation === null}
+            onClick={onTransformationHandler}
+          >
+            {isTransforming ? "Transforming..." : "Apply Transformation"}
+          </Button>
+
+          <Button
+            type="submit"
+            className="submit-button capitalize"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Submitting..." : "Save Image"}
+          </Button>
+        </div>
       </form>
     </Form>
   );
