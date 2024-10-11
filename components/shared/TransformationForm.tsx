@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState, useTransition } from "react";
-import { AspectRatioKey } from "@/lib/utils";
+import { AspectRatioKey, debounce } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { useRouter } from "next/router";
 
@@ -48,7 +48,6 @@ const TransformationForm = ({
   const [isTransforming, setIsTransforming] = useState(false);
   const [transformationConfig, setTransformationConfig] = useState(config);
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
 
   const initialValues =
     data && action === "Update"
@@ -93,7 +92,19 @@ const TransformationForm = ({
     value: string,
     type: string,
     onChangeField: (value: string) => void
-  ) => {};
+  ) => {
+    debounce(() => {
+      setNewTransformation((prevState: any) => ({
+        ...prevState,
+        [type]: {
+          ...prevState?.[type],
+          [fieldName === 'prompt' ? 'prompt' : 'to' ]: value 
+        }
+      }))
+    }, 1000)();
+
+    return onChangeField(value);
+  };
 
   const onTransformationHandler = async () => {};
 
