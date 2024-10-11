@@ -7,6 +7,7 @@ import { z } from "zod";
 import { Form } from "@/components/ui/form";
 import {
   aspectRatioOptions,
+  creditFee,
   defaultValues,
   transformationTypes,
 } from "@/constants";
@@ -20,9 +21,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useState, useTransition } from "react";
-import { AspectRatioKey, debounce } from "@/lib/utils";
+import { AspectRatioKey, debounce, deepMergeObjects } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { useRouter } from "next/router";
+import { updateCredits } from "@/lib/actions/user.actions";
 
 export const formSchema = z.object({
   title: z.string(),
@@ -98,15 +100,27 @@ const TransformationForm = ({
         ...prevState,
         [type]: {
           ...prevState?.[type],
-          [fieldName === 'prompt' ? 'prompt' : 'to' ]: value 
-        }
-      }))
+          [fieldName === "prompt" ? "prompt" : "to"]: value,
+        },
+      }));
     }, 1000)();
 
     return onChangeField(value);
   };
 
-  const onTransformationHandler = async () => {};
+  const onTransformationHandler = async () => {
+    setIsTransforming(true);
+
+    setTransformationConfig(
+      deepMergeObjects(newTransformation, transformationConfig)
+    );
+
+    setNewTransformation(null);
+
+    startTransition(async () => {
+      await updateCredits(userId, creditFee);
+    });
+  };
 
   return (
     <Form {...form}>
