@@ -61,12 +61,14 @@ const TransformationForm = ({
           publicId: data?.publicId,
         }
       : defaultValues;
-
+  
+  // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues,
   });
 
+  // 1. Define your form.
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
   }
