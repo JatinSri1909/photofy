@@ -7,6 +7,12 @@ import User from "../database/models/user.model";
 import Image from "../database/models/image.model";
 import { redirect } from "next/navigation";
 
+const populateUser = (query: any) => query.populate({
+    path: 'author',
+    model: User,
+    select: '_id firstName lastName clerkId'
+  })
+
 // ADD IMAGE
 export async function addImage({ image, userId, path}: AddImageParams) {
     try {
@@ -70,3 +76,16 @@ export async function deleteImage({ imageId }: { imageId: string }) {
 }
 
 // GET IMAGE
+export async function getImageById(imageId: string) {
+    try {
+      await connectToDatabase();
+  
+      const image = await populateUser(Image.findById(imageId));
+  
+      if(!image) throw new Error("Image not found");
+  
+      return JSON.parse(JSON.stringify(image));
+    } catch (error) {
+      handleError(error)
+    }
+  }
