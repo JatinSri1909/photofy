@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { AspectRatioKey, debounce, deepMergeObjects } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { updateCredits } from "@/lib/actions/user.actions";
@@ -191,6 +191,12 @@ const TransformationForm = ({
       await updateCredits(userId, creditFee);
     });
   };
+
+  useEffect(() => {
+    if(image && (type === 'restore' || type === 'removeBackground')) {
+      setNewTransformation(transformationType.config);
+    }
+  },[image, transformationType.config, type]);
 
   return (
     <Form {...form}>
