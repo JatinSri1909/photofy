@@ -1,3 +1,4 @@
+import Collection from "@/components/shared/Collection";
 import { navLinks } from "@/constants";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,6 +24,10 @@ const Home = () => {
             </Link>
           ))}
         </ul>
+      </section>
+
+      <section className="sm:mt-12">
+        <Collection images={[]} page={0} />
       </section>
     </>
   );
