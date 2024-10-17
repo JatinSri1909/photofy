@@ -1,4 +1,4 @@
-import Collection from "@/components/shared/Collection";
+import { Collection } from "@/components/shared/Collection";
 import { navLinks } from "@/constants";
 import Image from "next/image";
 import Link from "next/link";
