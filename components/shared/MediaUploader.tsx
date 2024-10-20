@@ -32,7 +32,7 @@ const MediaUploader = ({
       secureURL: result?.info?.secure_url,
     }));
 
-    onValueChange(result?.info?.public_id)
+    onValueChange(result?.info?.public_id);
 
     toast({
       title: "Image uploaded successfully",
